@@ -336,8 +336,11 @@ static void init_libspeedhack()
 	pid_t pid = getpid();
 	sprintf(efile_name, "/tmp/speedhack_%i_log", pid);
 	sprintf(fd_name, "/tmp/speedhack_%i_pipe", pid);
+	mkfifo(fd_name, 0600);
 	efile = fopen(efile_name, "a");
 	fd = open(fd_name, O_RDONLY | O_NONBLOCK);
+	chmod(efile_name, 0640);
+	chmod(fd_name, 0600);
 	fix_timescale();
 }
 
