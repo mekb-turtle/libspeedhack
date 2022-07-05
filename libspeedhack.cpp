@@ -23,6 +23,9 @@ using TzTypeGet = TzTypeHelper<decltype(gettimeofday)>::type;
 using TzTypeSet = TzTypeHelper<decltype(settimeofday)>::type;
 #pragma GCC diagnostic pop
 
+char efile_name[32];
+char fd_name[32];
+
 static timeval& operator *= (timeval &tv, double x)
 {
 	double sec = tv.tv_sec * x, usec = tv.tv_usec * x;
@@ -330,8 +333,11 @@ static void init_libspeedhack()
 	the_mutex = new mutex;
 	gettimeofday_orig = decltype(gettimeofday_orig)(dlsym(RTLD_NEXT,"gettimeofday"));
 	clock_gettime_orig = decltype(clock_gettime_orig)(dlsym(RTLD_NEXT,"clock_gettime"));
-	efile = fopen("/tmp/speedhack_log", "a");
-	fd = open("/tmp/speedhack_pipe", O_RDONLY | O_NONBLOCK);
+	pid_t pid = getpid();
+	sprintf(efile_name, "/tmp/speedhack_%i_log", pid);
+	sprintf(fd_name, "/tmp/speedhack_%i_pipe", pid);
+	efile = fopen(efile_name, "a");
+	fd = open(fd_name, O_RDONLY | O_NONBLOCK);
 	fix_timescale();
 }
 
